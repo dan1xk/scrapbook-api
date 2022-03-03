@@ -19,14 +19,14 @@ app.get('/cadastrar', (request: Request, response: Response, next: NextFunction)
 });
 
 //cadastrar usuario
-app.post('/cadastrar', verificacaoDeCadastro, (request: Request, response: Response, next: NextFunction) => {
+app.post('/cadastrar/:nome/:senha', verificacaoDeCadastro, (request: Request, response: Response, next: NextFunction) => {
     return response.status(201).json({
         mensagem: 'Conta criada com sucesso.'
     });
 });
 
 function verificacaoDeCadastro(request: Request, response: Response, next: NextFunction) {
-    const { nome , senha } = request.body;
+    const { nome , senha } = request.params;
     const usuario = new Usuario(nome, senha);
     let validate = true;
 
