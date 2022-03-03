@@ -1,7 +1,7 @@
 export default class Recado {
-    id: number
+    id: number;
 
-    constructor(public recado: string) {
+    constructor(public recados: string) {
         this.id = Math.floor(Math.random() * 1000);
-    }
-}
+    };
+};
