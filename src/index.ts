@@ -75,7 +75,7 @@ function autenticarLogin(request: Request, response: Response, next: NextFunctio
     if (!usuarioNome || !usuarioSenha) {
         return validate = false,
         response.json({
-            mensagem: 'Usuario ou senha incorreto.'
+            mensagem: 'Preencha os campos corretamente.'
         });
     };
 
@@ -112,30 +112,29 @@ function verificarRecado(request: Request, response: Response, next: NextFunctio
 };
 
 //deletar recados
-app.delete('/recados/:usuarioId/:recadoId',deletarRecado, (request: Request, response: Response) => {
-    return response.status(200).json({
+app.delete('/recados/:usuarioId/:recadoId', (request: Request, response: Response) => {
+    const { usuarioId, recadoId } = request.params;
+    const usuario = usuarios.findIndex(id => id.id === parseInt(usuarioId));
+    const recado = usuarios[usuario].recado.findIndex(recado => recado.id === parseInt(recadoId));
+
+    return usuarios[usuario].recado.splice(recado, 1),
+    response.status(200).json({
         mensagem: 'Recado apagado'
     });
 });
 
-function deletarRecado(request: Request, response: Response, next: NextFunction) {
-    const { usuarioId, recadoId } = request.params;
-    const usuario = usuarios.findIndex(id => id.id === parseInt(usuarioId));
-    const recado = usuarios[usuario].recado.findIndex(recado => recado.id === parseInt(recadoId));
-    let validate = true;
+//editar recados
+app.put('/recados/:nome/:recadoId', (request: Request, response: Response) => {
+    const { recadoId, nome } = request.params;
+    const { recado } = request.body;
+    const usuario = usuarios.findIndex(usuario => usuario.nome === nome);
+    const recadoUsuario = usuarios[usuario].recado.findIndex(recado => recado.id === parseInt(recadoId));
 
-    if(!usuarioId || !recadoId) {
-        return validate = false,
-        response.json({
-            mensagem: 'O recado não existe'
-        });
-    };
-
-    if(validate == true) {
-        return usuarios[usuario].recado.splice(recado, 1),
-        next();
-    };
-};
+    return usuarios[usuario].recado[recadoUsuario].recados = recado,
+    response.json({
+        mensagem: 'Recado Editado.'
+    });
+});
 
 app.listen(port, () => {
     console.log('Api ligada');
