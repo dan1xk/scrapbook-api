@@ -19,13 +19,6 @@ app.get('/cadastrar', (request: Request, response: Response, next: NextFunction)
     return response.json(usuarios);
 });
 
-//cadastrar usuario
-app.post('/cadastrar', verificacaoDeCadastro, (request: Request, response: Response) => {
-    return response.status(201).json({
-        mensagem: 'Conta criada com sucesso.'
-    });
-});
-
 function verificacaoDeCadastro(request: Request, response: Response, next: NextFunction) {
     const { nome , senha } = request.body;
     const usuario = new Usuario(nome, senha);
@@ -53,11 +46,27 @@ function verificacaoDeCadastro(request: Request, response: Response, next: NextF
         });
     };
 
+    if(usuario.nome.length < 3) {
+        return validate = false,
+        response.json({
+            mensagem: 'Nome de usuario precisa ser maior que 2 caracteres.'
+        });
+    };
+
     if(validate == true) {
         return usuarios.push(usuario),
         next();
     };
 };
+
+//cadastrar usuario
+app.post('/cadastrar', verificacaoDeCadastro, (request: Request, response: Response) => {
+    return response.status(201).json({
+        mensagem: 'Conta criada com sucesso.'
+    });
+});
+
+
 
 //logar
 app.get('/login', autenticarLogin, (request: Request, response: Response) => {
