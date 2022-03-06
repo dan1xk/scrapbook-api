@@ -27,28 +27,28 @@ function verificacaoDeCadastro(request: Request, response: Response, next: NextF
 
     if(usuarioNome) {
         return validate = false,
-        response.json({
+        response.status(401).json({
             mensagem: 'Nome já cadastrado.'
         });
     }
 
     if(!nome || !senha) {
         return validate = false,
-        response.json({
+        response.status(400).json({
             mensagem: 'Preencha todos os campos.'
         });
     };
 
     if(usuario.senha.length <= 3) {
         return validate = false,
-        response.json({
+        response.status(400).json({
             mensagem: 'Sua senha precisa ter mais de 3 caracteres.'
         });
     };
 
     if(usuario.nome.length < 3) {
         return validate = false,
-        response.json({
+        response.status(400).json({
             mensagem: 'Nome de usuario precisa ser maior que 2 caracteres.'
         });
     };
@@ -65,8 +65,6 @@ app.post('/cadastrar', verificacaoDeCadastro, (request: Request, response: Respo
         mensagem: 'Conta criada com sucesso.'
     });
 });
-
-
 
 //logar
 app.get('/login', autenticarLogin, (request: Request, response: Response) => {
