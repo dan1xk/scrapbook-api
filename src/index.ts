@@ -49,7 +49,7 @@ function verificacaoDeCadastro(request: Request, response: Response, next: NextF
     if(usuario.nome.length < 3) {
         return validate = false,
         response.status(400).json({
-            mensagem: 'Nome de usuario precisa ser maior que 2 caracteres.'
+            mensagem: 'Seu nome precisa ter mais de 2 caracteres.'
         });
     };
 
@@ -67,7 +67,7 @@ app.post('/cadastrar', verificacaoDeCadastro, (request: Request, response: Respo
 });
 
 //logar
-app.get('/login', autenticarLogin, (request: Request, response: Response) => {
+app.post('/login', autenticarLogin, (request: Request, response: Response) => {
     return response.status(200).json({
         mensagem: 'Logado com sucesso.'
     });  
@@ -79,14 +79,21 @@ function autenticarLogin(request: Request, response: Response, next: NextFunctio
     const usuarioSenha = usuarios.find(usuario => usuario.senha === senha);
     let validate = true;
 
-    if (!usuarioNome || !usuarioSenha) {
+    if (!nome || !senha) {
         return validate = false,
-        response.json({
-            mensagem: 'Preencha os campos corretamente.'
+        response.status(400).json({
+            mensagem: 'Preencha todos os campos.'
         });
     };
 
-    if(validate == true) {
+    if (nome != usuarioNome?.nome || senha != usuarioSenha?.senha) {
+        return validate = false,
+        response.status(401).json({
+            mensagem: 'Senha ou nome incorreto.'
+        });
+    }
+
+    if (validate == true) {
         return next();
     };
 };
