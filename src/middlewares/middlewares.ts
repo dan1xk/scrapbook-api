@@ -1,38 +1,38 @@
 import express, { Request, Response, NextFunction } from 'express';
-import Usuario from '../classes/Usuario';
-import { usuarios } from '../routes';
+import User from '../classes/User';
+import { users } from '../routes';
 
-export function verificacaoDeCadastro(request: Request, response: Response, next: NextFunction) {
-    const { nome , senha } = request.body;
-    const usuario = new Usuario(nome, senha);
-    const usuarioNome = usuarios.find(usuario => usuario.nome === nome);
+export function checkRegistration(request: Request, response: Response, next: NextFunction) {
+    const { name , password } = request.body;
+    const user = new User(name, password);
+    const userName = users.find(user => user.name === name);
     let validate = true;
 
-    if (usuarioNome) {
+    if (userName) {
         return validate = false,
         response.status(401).json({
-            mensagem: 'Usuario já cadastrado.'
+            message: 'User já cadastrado.'
         });
     }
 
-    if (!nome || !senha) {
+    if (!name || !password) {
         return validate = false,
         response.status(400).json({
-            mensagem: 'Preencha todos os campos.'
+            message: 'Preencha todos os campos.'
         });
     };
 
-    if (usuario.senha.length <= 3) {
+    if (user.password.length <= 3) {
         return validate = false,
         response.status(400).json({
-            mensagem: 'Sua senha precisa ter mais de 3 caracteres.'
+            message: 'Sua senha precisa ter mais de 3 caracteres.'
         });
     };
 
-    if (usuario.nome.length < 3) {
+    if (user.name.length < 3) {
         return validate = false,
         response.status(400).json({
-            mensagem: 'Seu nome precisa ter mais de 2 caracteres.'
+            message: 'Seu nome precisa ter mais de 2 caracteres.'
         });
     };
 
@@ -41,15 +41,15 @@ export function verificacaoDeCadastro(request: Request, response: Response, next
     };
 };
 
-export function verificarLogin(request: Request, response: Response, next: NextFunction) {
-    const { nome } = request.body;
-    const usuarioNome = usuarios.find(usuario => usuario.nome === nome);
+export function checkLogin(request: Request, response: Response, next: NextFunction) {
+    const { name } = request.body;
+    const userName = users.find(user => user.name === name);
     let validate = true;
 
-    if (nome !== usuarioNome?.nome) {
+    if (name !== userName?.name) {
         return validate = false,
         response.status(401).json({
-            mensagem: 'Usuario Não Logado'
+            message: 'Usuario Não Logado'
         });
     };
 
@@ -58,14 +58,14 @@ export function verificarLogin(request: Request, response: Response, next: NextF
     };
 };
 
-export function verificarRecado(request: Request, response: Response, next: NextFunction) {
-    const { recado } = request.body;
+export function checkErrand(request: Request, response: Response, next: NextFunction) {
+    const { errand } = request.body;
     let validate = true;
 
-    if (!recado) {
+    if (!errand) {
         return validate = false,
-        response.json({
-            mensagem: 'Preecha o recado'
+        response.status(400).json({
+            message: 'Preecha o recado'
         });   
     };
 
@@ -74,23 +74,23 @@ export function verificarRecado(request: Request, response: Response, next: Next
     };
 };
 
-export function autenticarLogin(request: Request, response: Response, next: NextFunction) {
-    const { nome , senha } = request.body;
-    const usuarioNome = usuarios.find(usuario => usuario.nome === nome);
-    const usuarioSenha = usuarios.find(usuario => usuario.senha === senha);
+export function authenticateUser(request: Request, response: Response, next: NextFunction) {
+    const { name , password } = request.body;
+    const userName = users.find(user => user.name === name);
+    const userPassword = users.find(user => user.password === password);
     let validate = true;
 
-    if (!nome || !senha) {
+    if (!name || !password) {
         return validate = false,
         response.status(400).json({
-            mensagem: 'Preencha todos os campos.'
+            message: 'Preencha todos os campos.'
         });
     };
 
-    if (nome != usuarioNome?.nome || senha != usuarioSenha?.senha) {
+    if (name != userName?.name || password != userPassword?.password) {
         return validate = false,
         response.status(401).json({
-            mensagem: 'Senha ou nome incorreto.'
+            message: 'Senha ou nome incorreto.'
         });
     };
 

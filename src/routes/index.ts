@@ -1,18 +1,18 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import Usuario from '../classes/Usuario';
-import Recado from '../classes/Recado';
+import User from '../classes/User';
+import Errand from '../classes/Errand';
 
 import { 
-    verificacaoDeCadastro,
-    verificarLogin,
-    verificarRecado,
-    autenticarLogin
+    checkRegistration,
+    checkLogin,
+    authenticateUser,
+    checkErrand
 } from '../middlewares/middlewares';
 
 const app = express();
 const port = process.env.PORT || 8080;
-export const usuarios: Usuario[] = [];
+export const users: User[] = [];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -22,70 +22,65 @@ app.get('/', (request: Request, response: Response) => {
     return response.send('OK');
 });
 
-//mostrar usuarios
-app.get('/cadastrar', (request: Request, response: Response, next: NextFunction) => {
-    return response.json(usuarios);
+app.get('/users', (request: Request, response: Response, next: NextFunction) => {
+    return response.status(200).json(users);
 });
 
-//cadastrar usuario
-app.post('/cadastrar', verificacaoDeCadastro, (request: Request, response: Response) => {
-    const { nome , senha } = request.body;
-    const usuario = new Usuario(nome, senha);
-    usuarios.push(usuario)
+app.post('/register', checkRegistration, (request: Request, response: Response) => {
+    const { name , password } = request.body;
+    const user = new User(name, password);
+    users.push(user)
     
     return response.status(201).json({
-        mensagem: 'Conta criada com sucesso.'
+        message: 'Conta criada com sucesso.'
     });
 });
 
-//logar
-app.post('/login', autenticarLogin, (request: Request, response: Response) => {
+app.post('/login', authenticateUser, (request: Request, response: Response) => {
     return response.status(200).json({
-        mensagem: 'Logado com sucesso.'
+        message: 'Logado com sucesso.'
     });  
 });
 
-app.post('/recados', verificarLogin, (request: Request, response: Response) => {
+app.post('/errands', checkLogin, (request: Request, response: Response) => {
     return response.status(200).json({
-        mensagem: 'Usuario Logado'
+        message: 'Usuario Logado'
     });
 });
 
-//add Recado
-app.post('/recados/:usuarioId',verificarRecado, (request: Request, response: Response) => {
-    const { usuarioId } = request.params;
-    const { recado } = request.body;
-    const addRecado = new Recado(recado);
-    const usuario = usuarios.findIndex(id => id.id === parseInt(usuarioId));
-    usuarios[usuario].recado.push(addRecado)
+app.post('/errand/:name', checkErrand, (request: Request, response: Response) => {
+    const { name } = request.params;
+    const { errand } = request.body;
+    const user = users.findIndex(user => user.name === name);
+    const addErrand = new Errand(errand);
+
+    users[user].errands.push(addErrand)
 
     return response.status(201).json({
-        mensagem: 'Recado Criado.'
+        message: 'Recado Criado.'
     });
 });
 
-//deletar recados
-app.delete('/:nome/recados/:recadoId', (request: Request, response: Response) => {
-    const { nome, recadoId } = request.params;
-    const usuario = usuarios.findIndex(usuario => usuario.nome === nome);
-    const recado = usuarios[usuario].recado.findIndex(recado => recado.id === parseInt(recadoId));
+app.delete('/:name/errand/:errandId', (request: Request, response: Response) => {
+    const { name, errandId } = request.params;
+    const user = users.findIndex(user => user.name === name);
+    const errand = users[user].errands.findIndex(errand => errand.id === parseInt(errandId));
 
-    return usuarios[usuario].recado.splice(recado, 1),
+    return users[user].errands.splice(errand, 1),
     response.status(200).json({
-        mensagem: 'Recado apagado'
+        message: 'Recado apagado'
     });
 });
 
-//editar recados
-app.put('/:nome/recados/:recadoId', (request: Request, response: Response) => {
-    const { recadoId, nome } = request.params;
-    const { recado } = request.body;
-    const usuario = usuarios.findIndex(usuario => usuario.nome === nome);
-    const recadoUsuario = usuarios[usuario].recado.findIndex(recado => recado.id === parseInt(recadoId));
+app.put('/:name/errand/:errandId', (request: Request, response: Response) => {
+    const { name, errandId } = request.params;
+    const { errand } = request.body;
+    const user = users.findIndex(user => user.name === name);
+    const errandUser = users[user].errands.findIndex(errand => errand.id === parseInt(errandId));
 
-    return usuarios[usuario].recado[recadoUsuario].recados = recado,
-    response.json({
-        mensagem: 'Recado Editado.'
+    return users[user].errands[errandUser].errand = errand,
+    response.status(200).json({
+        message: 'Recado Editado.'
     });
 });
 
