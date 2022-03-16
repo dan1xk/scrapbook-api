@@ -11,7 +11,7 @@ export function checkRegistration(request: Request, response: Response, next: Ne
     if (userName) {
         return validate = false,
         response.status(401).json({
-            message: 'User já cadastrado.'
+            message: 'Usuario já cadastrado.'
         });
     }
 
