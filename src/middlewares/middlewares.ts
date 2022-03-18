@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import User from '../classes/User';
-import { users } from '../routes';
+import { users } from '../index';
 
 export function checkRegistration(request: Request, response: Response, next: NextFunction) {
     const { name , password } = request.body;

@@ -1,4 +1,3 @@
-import User from './User';
 import Errand from './Errand';
 
 export default class Users {

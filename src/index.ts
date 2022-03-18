@@ -1,14 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import User from '../classes/User';
-import Errand from '../classes/Errand';
+import User from './classes/User';
+import Errand from './classes/Errand';
 
 import { 
     checkRegistration,
     checkLogin,
     authenticateUser,
     checkErrand
-} from '../middlewares/middlewares';
+} from './middlewares/middlewares';
 
 const app = express();
 const port = process.env.PORT || 8080;
